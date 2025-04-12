@@ -36,3 +36,48 @@
     transform: rotate(360deg);
   }
 }
+
+.map-container {
+  display: flex;               
+  justify-content: center;     
+  align-items: center;        
+  height: 100vh;             
+  width: 100%;                
+  position: relative;         
+}
+
+.leaflet-container {
+  width: 100%;               
+  height: 100%;               
+}
+
+
+.header {
+  display: flex;               /* Use flexbox to align items */
+  align-items: center;         /* Center items vertically */
+  justify-content: space-between; /* Space out title and form */
+  margin-bottom: 10px;        /* Add space below the header */
+}
+
+.map-title {
+  text-align: center;          /* Center the title text */
+  margin-bottom: 10px;        /* Space below the title */
+  margin-top: 20px;           /* Space above the title */
+}
+
+.instructions {
+  text-align: center;          /* Center the instructions */
+  margin-bottom: 20px;        /* Space below instructions */
+  font-size: 14px;            /* Adjust font size */
+}
+
+.address-form {
+  display: flex;               /* Use flexbox for input and button */
+  justify-content: center;     /* Center the form elements */
+  margin: 0 auto;             /* Center the form in the container */
+}
+
+.address-form input {
+  margin-right: 10px;         /* Space between input and button */
+  padding: 5px;               /* Add padding for better appearance */
+}
