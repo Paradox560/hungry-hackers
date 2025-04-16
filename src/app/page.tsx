@@ -1,130 +1,223 @@
 "use client";
 
-import { SignedOut, SignedIn, UserButton, useUser } from "@clerk/nextjs";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+} from "react-leaflet";
+import L from "leaflet";
+import Papa from "papaparse";
+import "leaflet/dist/leaflet.css";
 import { Button } from "@mui/material";
-import { db } from "../../firebase";
-import { enableNetwork } from "firebase/firestore";
+import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
 
-export default function Home() {
-  const { user, isLoaded, isSignedIn } = useUser();
-  const [userCreationAttempted, setUserCreationAttempted] = useState(false);
+// Fix Leaflet Icons
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-  const createUser = async () => {
-    try {
-      // Force enabling the Firestore network
-      await enableNetwork(db);
+// Ensure Leaflet icon fix runs only on the client side
 
-      if (!user || !user.id) {
-        console.error("Cannot create user: User or user ID is undefined");
-        return;
-      }
 
-      console.log("Attempting to create/verify user with ID:", user.id);
-      const collectionRef = collection(db, 'users');
-      const docRef = doc(collectionRef, user.id);
-      const docSnap = await getDoc(docRef);
+// Interfaces
+interface FoodBank {
+  lat: number;
+  lon: number;
+  address: string;
+}
 
-      if (docSnap.exists()) {
-        console.log("User already exists in db with ID:", user.id);
-      } else {
-        console.log("Creating new user in db with ID:", user.id);
-        const userData = {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.primaryEmailAddress?.emailAddress,
-          ingredients: {},
-          isActive: false,
-          schedule: {
-            monday: { start: "", end: "" },
-            tuesday: { start: "", end: "" },
-            wednesday: { start: "", end: "" },
-            thursday: { start: "", end: "" },
-            friday: { start: "", end: "" },
-            saturday: { start: "", end: "" },
-            sunday: { start: "", end: "" },
-          },
-          location: "Not set",
-          dietaryRestrictions: {},
-          language: "en",
-          culturalBackground: "Not set",
-        };
-        console.log("User data being saved:", userData);
-        await setDoc(docRef, userData);
-        console.log("User successfully created in db");
-      }
+interface MapUpdaterProps {
+  center: [number, number];
+}
 
-      setUserCreationAttempted(true);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error("Error adding user to db:", message);
-    }
-  };
-
+// MapUpdater Component
+function MapUpdater({ center }: MapUpdaterProps) {
+  const map = useMap();
   useEffect(() => {
-    if (isSignedIn && isLoaded && user && !userCreationAttempted) {
-      console.log("User is signed in, loaded, and available. Creating user...");
-      createUser();
-    } else if (!isSignedIn && isLoaded) {
-      console.log("User is not signed in but loading is complete");
-    } else if (!isLoaded) {
-      console.log("User data is still loading");
+    if (center) {
+      map.setView(center, 13);
     }
-  }, [isSignedIn, isLoaded, user, userCreationAttempted]);
+  }, [center, map]);
+  return null;
+}
+
+// Utility Functions
+function cleanAddress(raw: string): string {
+  const match = raw.match(/\d{1,5} .*/);
+  return match ? match[0] : raw;
+}
+
+const geocodeAddress = async (address: string): Promise<{
+  lat: number;
+  lon: number;
+} | null> => {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+    address
+  )}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "leaflet-map-example/1.0",
+      },
+    });
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lon: parseFloat(data[0].lon),
+      };
+    }
+  } catch (error) {
+    console.error("Geocoding error:", address, error);
+  }
+
+  return null;
+};
+
+// Chatbot Component
+const Chatbot: React.FC = () => {
+  const handleClick = () => {
+    alert("Working on adding a chatbot");
+  };
 
   return (
     <div
-      style={{ backgroundColor: "#860F09" }}
-      className="min-h-screen full-width"
+      className="chatbot-icon"
+      onClick={handleClick}
+      style={{
+        position: "fixed",
+        bottom: "20px",
+        right: "20px",
+        cursor: "pointer",
+      }}
     >
-      <h1
-        style={{ color: "#FDEDD6", borderBottom: "0.15rem solid white" }}
-        className="text-8xl pt-8 ml-7 w-fit"
-      >
-        Welcome to Capital Area Food Chat
-      </h1>
-      <h2 style={{ color: "#FDEDD6" }} className="text-5xl ml-10 mt-3">
-        Your Place to Get the Food
-      </h2>
+      <img
+        src="https://static.vecteezy.com/system/resources/thumbnails/006/692/321/small_2x/chatting-message-icon-template-black-color-editable-chatting-message-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"
+        alt="Chatbot Icon"
+        style={{ width: "50px", height: "50px" }}
+      />
+    </div>
+  );
+};
 
-      <SignedIn>
-        <UserButton afterSignOutUrl="/" />
-        <Button
-          href="/home"
-          style={{
-            backgroundColor: "#B37238",
-            color: "#FDEDD6",
-            fontSize: 24,
-            fontWeight: 400,
-          }}
-          className="ml-[3%] mt-[6%] w-44 h-18"
-          variant="contained"
-        >
-          Home
-        </Button>
-      </SignedIn>
-      <SignedOut>
-        <p
-          style={{ color: "#FDEDD6", fontWeight: 300 }}
-          className="text-2xl ml-[3%] mt-[5%] w-3/5"
-        >
-          Capital Area Food Chat does something. Log in with the button below!
+// Main Component
+export default function Home() {
+  const [center, setCenter] = useState<[number, number]>([38.89511, -77.03637]); // Default DC
+  const [foodBanks, setFoodBanks] = useState<FoodBank[]>([]);
+  const addressRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: markerIcon2x,
+      iconUrl: markerIcon,
+      shadowUrl: markerShadow,
+    });
+  }, []);
+
+  const loadAndGeocode = async () => {
+    const files = ["shopping_partners.csv", "mobile_markets.csv"];
+    const allAddresses: string[] = [];
+
+    for (let file of files) {
+      const response = await fetch(`/data/${file}`);
+      const text = await response.text();
+      const parsed = Papa.parse(text, { header: true });
+      parsed.data.forEach((row: any) => {
+        if (row["Shipping Address"]) {
+          allAddresses.push(cleanAddress(row["Shipping Address"]));
+        }
+      });
+    }
+
+    const geocoded: FoodBank[] = [];
+    for (let address of allAddresses) {
+      const coords = await geocodeAddress(address);
+      if (coords) {
+        geocoded.push({ ...coords, address });
+      } else {
+        console.warn("Could not geocode:", address);
+      }
+    }
+
+    setFoodBanks(geocoded);
+  };
+
+  useEffect(() => {
+    loadAndGeocode();
+  }, []);
+
+  const locateUser = () => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      setCenter([latitude, longitude]);
+    });
+  };
+
+  const handleAddressSearch = async () => {
+    const input = addressRef.current?.value;
+    if (!input) return;
+
+    const coords = await geocodeAddress(input);
+    if (coords) {
+      setCenter([coords.lat, coords.lon]);
+    } else {
+      alert("Could not locate that address.");
+    }
+  };
+
+  return (
+    <div>
+      <div style={{ padding: "10px", backgroundColor: "#f2f2f2" }}>
+        <h2 style={{ marginBottom: "5px" }}>🗺️ Find Food Banks Near You</h2>
+        <p>
+          Enter your address and click locate to find nearby food banks.
+          <br />
+          Ingrese su dirección y haga clic en localizar para encontrar bancos de
+          alimentos cercanos.
         </p>
-        <Button
-          href="/sign-in"
-          style={{
-            backgroundColor: "#B37238",
-            color: "#FDEDD6",
-            fontSize: 24,
-            fontWeight: 400,
-          }}
-          className="ml-[3%] mt-[6%] w-44 h-18"
-          variant="contained"
-        >
-          Log In
-        </Button>
-      </SignedOut>
+        <div style={{ marginBottom: "10px" }}>
+          <input
+            ref={addressRef}
+            type="text"
+            placeholder="Enter address..."
+            style={{ padding: "5px", width: "300px" }}
+          />
+          <button
+            onClick={handleAddressSearch}
+            style={{ marginLeft: "5px" }}
+          >
+            📌 Locate
+          </button>
+        </div>
+        <button onClick={locateUser} style={{ margin: "10px" }}>
+          📍 Use My Location
+        </button>
+      </div>
+
+      <MapContainer
+        center={center}
+        zoom={12}
+        style={{ height: "80vh", width: "100%" }}
+      >
+        <MapUpdater center={center} />
+        <TileLayer
+          attribution="© OpenStreetMap contributors"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {foodBanks.map((fb, idx) => (
+          <Marker key={idx} position={[fb.lat, fb.lon]}>
+            <Popup>{fb.address}</Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+      <Chatbot />
     </div>
   );
 }
