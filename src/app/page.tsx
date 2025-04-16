@@ -2,26 +2,20 @@
 
 import { SignedOut, SignedIn, UserButton, useUser } from "@clerk/nextjs";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Button } from "@mui/material";
 import { db } from "../../firebase";
-import { enableNetwork } from "firebase/firestore";
 
 export default function Home() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const [userCreationAttempted, setUserCreationAttempted] = useState(false);
 
   const createUser = async () => {
     try {
-      // Force enabling the Firestore network
-      await enableNetwork(db);
-
       if (!user || !user.id) {
         console.error("Cannot create user: User or user ID is undefined");
         return;
       }
 
-      console.log("Attempting to create/verify user with ID:", user.id);
       const collectionRef = collection(db, 'users');
       const docRef = doc(collectionRef, user.id);
       const docSnap = await getDoc(docRef);
@@ -29,7 +23,6 @@ export default function Home() {
       if (docSnap.exists()) {
         console.log("User already exists in db with ID:", user.id);
       } else {
-        console.log("Creating new user in db with ID:", user.id);
         const userData = {
           firstName: user.firstName,
           lastName: user.lastName,
@@ -50,12 +43,8 @@ export default function Home() {
           language: "en",
           culturalBackground: "Not set",
         };
-        console.log("User data being saved:", userData);
         await setDoc(docRef, userData);
-        console.log("User successfully created in db");
       }
-
-      setUserCreationAttempted(true);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error("Error adding user to db:", message);
@@ -63,15 +52,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (isSignedIn && isLoaded && user && !userCreationAttempted) {
-      console.log("User is signed in, loaded, and available. Creating user...");
+    if (isSignedIn && isLoaded && user) {
       createUser();
     } else if (!isSignedIn && isLoaded) {
       console.log("User is not signed in but loading is complete");
     } else if (!isLoaded) {
       console.log("User data is still loading");
     }
-  }, [isSignedIn, isLoaded, user, userCreationAttempted]);
+  }, [isSignedIn, isLoaded, user]);
 
   return (
     <div
