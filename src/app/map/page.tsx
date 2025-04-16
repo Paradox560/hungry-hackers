@@ -114,11 +114,12 @@ export default function MapPage() {
   const addressRef = useRef<HTMLInputElement>(null);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
-  // Load translations
+  // Load translations whenever the locale changes.
   useEffect(() => {
     const loadTranslations = async () => {
+      setIsLoading(true);
       const keys = [
         "map.title",
         "map.description",
@@ -137,7 +138,7 @@ export default function MapPage() {
     };
 
     loadTranslations();
-  }, []);
+  }, [locale]); // Added locale here
 
   useEffect(() => {
     delete L.Icon.Default.prototype._getIconUrl;

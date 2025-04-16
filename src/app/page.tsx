@@ -115,7 +115,8 @@ export default function HomePage() {
       />
 
       <h1 className="text-3xl font-bold mb-4">
-        <TranslatedText textKey="app.title" />
+        {/* By adding a key using the locale, we force this TranslatedText to remount when locale changes */}
+        <TranslatedText key={`app.title-${locale}`} textKey="app.title" />
       </h1>
 
       <>

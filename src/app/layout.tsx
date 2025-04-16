@@ -2,7 +2,7 @@
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 import { LocaleContext, preloadTranslations, translate } from "@/i18n";
 
@@ -67,13 +67,11 @@ export default function RootLayout({
     }
   }, [locale]);
 
-  // Load app title based on current locale
+  // Load app title based on current locale, waiting for translations to load
   useEffect(() => {
-    setAppTitle(translate("app.title", locale) || "Get Food Support Near You");
-
-    // Preload the newly selected locale
     setIsChangingLocale(true);
-    preloadTranslations([locale]).finally(() => {
+    preloadTranslations([locale]).then(() => {
+      setAppTitle(translate("app.title", locale) || "Get Food Support Near You");
       setIsChangingLocale(false);
     });
   }, [locale]);
@@ -118,6 +116,9 @@ export default function RootLayout({
                     ))}
                   </select>
                 </div>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
               </div>
             </header>
             {children}
