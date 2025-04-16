@@ -79,7 +79,7 @@ export default function Chatbot() {
     };
 
     loadAllTranslations();
-  }, [t]);
+  }, []);
 
   const handleNext = () => setStep(step + 1);
   const handlePrevious = () => setStep(Math.max(1, step - 1));

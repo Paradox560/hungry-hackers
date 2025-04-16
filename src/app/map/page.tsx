@@ -137,7 +137,7 @@ export default function MapPage() {
     };
 
     loadTranslations();
-  }, [t]);
+  }, []);
 
   useEffect(() => {
     delete L.Icon.Default.prototype._getIconUrl;

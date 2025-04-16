@@ -7,7 +7,7 @@ import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { db } from "../../firebase";
 import Link from "next/link";
-import { useTranslation } from "@/i18n";
+import { useTranslation, preloadTranslations } from "@/i18n"; // Note the additional preloadTranslations import
 import TranslatedText from "@/components/TranslatedText";
 
 export default function HomePage() {
@@ -16,9 +16,13 @@ export default function HomePage() {
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load translations
+  // Update: Preload translations for the current locale before calling t(...)
   useEffect(() => {
     const loadTranslations = async () => {
+      setIsLoading(true);
+      // Wait for the translation file for the current locale to be preloaded
+      await preloadTranslations([locale]);
+      
       const keys = [
         "app.title",
         "app.description",
@@ -37,7 +41,7 @@ export default function HomePage() {
     };
 
     loadTranslations();
-  }, [t, locale]);
+  }, [locale]);
 
   const createUser = async () => {
     try {

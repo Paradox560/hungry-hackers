@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 
 // Create the locale context
 export const LocaleContext = createContext({
@@ -117,34 +117,34 @@ export const translate = (
 
 // Custom hook for using translations in components
 export function useTranslation() {
-  const { locale } = useContext(LocaleContext);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load translations for current locale
-  useEffect(() => {
-    let isMounted = true;
-
-    const load = async () => {
-      await loadTranslationFile(locale);
-      if (isMounted) {
-        setIsLoaded(true);
-      }
-    };
-
-    load();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [locale]);
-
-  // The translation function for use in components
-  const t = (key: string, params?: Record<string, any>): string => {
-    return translate(key, locale, params);
-  };
-
-  return { t, locale, isLoaded };
-}
+    const { locale } = useContext(LocaleContext);
+    const [isLoaded, setIsLoaded] = useState(false);
+  
+    useEffect(() => {
+      let isMounted = true;
+      const load = async () => {
+        await loadTranslationFile(locale);
+        if (isMounted) {
+          setIsLoaded(true);
+        }
+      };
+      load();
+      return () => {
+        isMounted = false;
+      };
+    }, [locale]);
+  
+    // Memoize the translation function so its reference is stable
+    const t = useCallback(
+      (key: string, params?: Record<string, any>): string => {
+        return translate(key, locale, params);
+      },
+      [locale]
+    );
+  
+    return { t, locale, isLoaded };
+  }
+  
 
 // Initialize by preloading English translations
 if (typeof window !== "undefined") {
