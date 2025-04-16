@@ -82,15 +82,36 @@ const geocodeAddress = async (address: string): Promise<{
 const flow={
   start: {
     message: "Hi! Do you have any more questions?",
-    function: (params) => setForm({...form, name: params.userInput}),
-    path: "repeated"
+    path: "gemini_call"
   },
-  repeated: {
-    message: "I hope that helped answer your question, is there anything else I can help you with?",
-    function: (params) => setForm({...form, name: params.userInput}),
-    path: "repeated"
-  }
-}
+  // repeated: {
+  //   message: "I hope that helped answer your question, is there anything else I can help you with?",
+  //   function: (params) => setForm({...form, name: params.userInput}),
+  //   path: "repeated"
+  // },
+  gemini_call: {
+    message: (params) => {
+      let apiKey = params.userInput.trim();
+      return "Ask me anything!";
+    },
+    path: "loop",
+  },
+  loop: {
+    message: async (params) => {
+      await  fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+          body: params,
+      });
+      }
+    },
+    path: () => {
+      if (hasError) {
+        return "start"
+      }
+      return "loop"
+    }
+};
 
 const Chatbot = () => {
 	const [form, setForm] = React.useState({});
