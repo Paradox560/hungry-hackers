@@ -1,39 +1,22 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-pro", generationConfig: {
-        responseMimeType: "application/json"
-      }
-    });
+export async function POST(req: NextRequest) {
+    try {
+        // Parse the JSON body from the request
+        const body = await req.json();
 
-    const { systemPrompt, userPrompt } = await req.json();
+        // Send body to Flask API
+        const response = await fetch('http://127.0.0.1:5000/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
 
-    const result = await model.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: systemPrompt }]
-        },
-        {
-          role: "user",
-          parts: [{ text: userPrompt }]
-        }
-      ]
-    });
-
-    const response = await result.response;
-    const textResponse = await response.text();
-
-    // Assuming the response is JSON, parse it
-    const information = JSON.parse(textResponse);
-
-    return NextResponse.json(information);
-  } catch (error) {
-    console.error("GenAI request error:", error);
-    return NextResponse.json({ error: "An error occurred processing your request" }, { status: 500 });
-  }
+        // Receive response
+        const data = await response.json();
+        return NextResponse.json({ data: data, status: response.status });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+        return NextResponse.json({ error: error }, { status: 500 });
+    }
 }

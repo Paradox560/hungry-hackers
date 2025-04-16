@@ -19,6 +19,8 @@
       "next": "Tiếp theo",
       "back": "Quay lại",
       "findPantries": "Tìm kho thực phẩm",
+      "title": "Khảo sát hỗ trợ thực phẩm",
+      "description": "Giúp chúng tôi hiểu nhu cầu của bạn để tìm ra các lựa chọn hỗ trợ thực phẩm tốt nhất cho bạn.",
       "completion": {
         "title": "Cảm ơn bạn đã hoàn thành khảo sát!",
         "description": "Nhấp vào bên dưới để tìm các kho thực phẩm gần bạn dựa trên sở thích của bạn."

@@ -123,6 +123,7 @@ export function useTranslation() {
     useEffect(() => {
       let isMounted = true;
       const load = async () => {
+        setIsLoaded(false);
         await loadTranslationFile(locale);
         if (isMounted) {
           setIsLoaded(true);

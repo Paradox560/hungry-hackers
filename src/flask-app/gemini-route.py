@@ -4,86 +4,92 @@ from google import genai
 from google.genai import types
 import json
 
-def generate(userPrompt):
+
+def generate(user_message):
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
     )
 
-    model = "gemini-2.0-flash"
+    # files = [
+    #     # Please ensure that the file is available in local system working direrctory or change the file path.
+    #     client.files.upload(file="databases.txt"),
+    #     # Please ensure that the file is available in local system working direrctory or change the file path.
+    #     client.files.upload(file="databases.txt"),
+    # ]
+    model = "gemini-2.5-pro-preview-03-25"
     contents = [
         types.Content(
             role="user",
             parts=[
-                types.Part.from_text(text=userPrompt),
+                types.Part.from_text(text=user_message),  
             ],
         ),
     ]
     generate_content_config = types.GenerateContentConfig(
-        temperature=0.35,
         response_mime_type="application/json",
         response_schema=genai.types.Schema(
                         type = genai.types.Type.OBJECT,
-                        required = ["name", "description", "total_calories", "total_protein", "total_fat", "total_carbs", "foods"],
                         properties = {
                             "name": genai.types.Schema(
                                 type = genai.types.Type.STRING,
                             ),
-                            "description": genai.types.Schema(
+                            "address": genai.types.Schema(
                                 type = genai.types.Type.STRING,
                             ),
-                            "total_calories": genai.types.Schema(
-                                type = genai.types.Type.NUMBER,
+                            "hours": genai.types.Schema(
+                                type = genai.types.Type.STRING,
                             ),
-                            "total_protein": genai.types.Schema(
-                                type = genai.types.Type.NUMBER,
+                            "phone": genai.types.Schema(
+                                type = genai.types.Type.STRING,
                             ),
-                            "total_fat": genai.types.Schema(
-                                type = genai.types.Type.NUMBER,
-                            ),
-                            "total_carbs": genai.types.Schema(
-                                type = genai.types.Type.NUMBER,
-                            ),
-                            "foods": genai.types.Schema(
-                                type = genai.types.Type.ARRAY,
-                                items = genai.types.Schema(
-                                    type = genai.types.Type.OBJECT,
-                                    required = ["food_name", "serving_size", "calories", "fat", "carbs", "protein"],
-                                    properties = {
-                                        "food_name": genai.types.Schema(
-                                            type = genai.types.Type.STRING,
-                                        ),
-                                        "serving_size": genai.types.Schema(
-                                            type = genai.types.Type.STRING,
-                                        ),
-                                        "calories": genai.types.Schema(
-                                            type = genai.types.Type.NUMBER,
-                                        ),
-                                        "fat": genai.types.Schema(
-                                            type = genai.types.Type.NUMBER,
-                                        ),
-                                        "carbs": genai.types.Schema(
-                                            type = genai.types.Type.NUMBER,
-                                        ),
-                                        "protein": genai.types.Schema(
-                                            type = genai.types.Type.NUMBER,
-                                        ),
-                                    },
-                                ),
+                            "notes": genai.types.Schema(
+                                type = genai.types.Type.OBJECT,
+                                properties = {
+                                    "note": genai.types.Schema(
+                                        type = genai.types.Type.STRING,
+                                    ),
+                                },
                             ),
                         },
                     ),
         system_instruction=[
-            types.Part.from_text(text="""You are a nutritionist and a culinary master. You are given a list of foods that your client can eat, 
-and each item in the list contains the food name, the serving size, the calories per serving, the fat per serving, the carbs
-per serving, and the protein per serving. Please create 1 meal from this given food list. You should calculate the total calories,
-total fat, total carbs, and the total protein of the meal based on the number of servings you’re recommending and the calories, fat,
-carbs, and protein per serving. You should create a name for this meal, a one sentence description, and specify each food you used
-in the meal, and the serving size, total calories, fat, carbs, and protein. We will also give you the number of calories, fat, carbs,
-and protein the user wants to eat for this meal. Please make your meal’s total calories, fat, carbs, and protein come as close to
-possible as what the user wants to eat with it serving as a lower bound. Please limit yourself to only using a maximum of 7 ingredients.
-For each food, specify how many calories, fat, carbs, and protein the total serving.
-When responding to future queries, you MUST return in the following JSON format, no other comments necessary:"""),
-        ],
+            types.Part.from_text(text="""
+You are a helper ChatBot for a food bank called the Capital Area Foodbank. 
+Your job is to help customers find food banks in their area that they can access to get food. 
+The following are criteria that you will use to give an array of food banks that fits the criteria of a customer.
+""")
+#             types.Part.from_text(text="""You are a helper ChatBot for a food bank called the Capital Area Foodbank. Your job is to help customers find food banks in their area that they can access to get food. The following are criteria that you will use to give an array of food banks that fits the criteria of a customer. You will use the attached file and filter it based on the responses of the customer.
+# We have the following information:
+# Please share your address or location.
+# The client will enter their address or location into a GIS (like CAFB’s Get Help Map) and pull up top ~50 sites, ranked by geographic proximity. In the provided text file, ignore any text that comes before the number which starts the addresses.
+# Would you like to get food today or another day this week?
+# Filter nearby sites by days of operation based on client preference. Interpret the week of the month field to know which distributions will be happening soonest.
+# Follow up: If another day, what day?
+# What time of day would you like to pick up food?
+# Filter by hours of operation and see who is open on those hours of the day.
+# Are you able to travel to a food pantry using a private vehicle or public transit?
+# If yes, move to next question.
+# If no, skip to question 8
+# Do you have any dietary restrictions or diet-related illness?
+# If client says they are diabetic, have hypertension, need low sodium, need low sugar, want fresh produce, or anything else indicating an all-produce menu would be ideal, filter by <Associated Program = Community Marketplace or Mobile Market>
+# If client says they eat Halal, filter by <Cultural Populations Served = Middle Eastern/North African>
+# If no, continue to question 6.
+# Do you have access to a kitchen to store and/or cook food?
+# If yes, continue to question 7
+# If no, filter by <Food Format = Prepared meals> or the word “meals” in <Additional Note>
+# Do you also need any of these other services? Potential options include: Housing, Government benefits, Financial assistance, Services for older adults, Behavioral health Health care, Child care, English language classes, Job training
+# If yes, interpret the client requests and filter by the other services (<Wraparound Service>) the partner offers
+# Can a relative or friend can travel to a pantry for you?
+# If yes, suggest 3 options (as above) with slightly different language (e.g., “Tell your friend or family member to call…”)
+# If no, search filter by <Distribution Model = Home delivery> and suggest 3 options. Include a special message that says “If you are not able to be served by any of these organizations, please call 202-644-9807 for more support.”
+# What is your cultural background?
+# Filter by cultural population served
+# Your instructions:
+# Suggest at least 3 food pantry options to client based on answers above, including address and phone number. Tell the customer to call the pantry before visiting to confirm hours of operation.
+# Prioritize soonest day, geographic proximity, and hours of operation as top 3 factors
+# If any food pantry requirements (e.g., <Food Pantry Requirements = ID>, list those with the recommendation (e.g., “You will need to bring your ID with you to this pantry)
+# If “by appointment only,” advise to make an appointment beforehand""")
+        ]
     )
 
     full_response = ""
@@ -99,6 +105,7 @@ When responding to future queries, you MUST return in the following JSON format,
                         full_response += part.text
 
     parsed_response = json.loads(full_response)
+    print(parsed_response)
     return parsed_response
 
 if __name__ == "__main__":

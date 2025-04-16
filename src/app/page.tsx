@@ -12,12 +12,13 @@ import TranslatedText from "@/components/TranslatedText";
 
 export default function HomePage() {
   const { user, isLoaded, isSignedIn } = useUser();
-  const { t, locale } = useTranslation();
+  const { t, locale, isLoaded: isTranslationLoaded } = useTranslation();
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   // Update: Preload translations for the current locale before calling t(...)
   useEffect(() => {
+    if (!isTranslationLoaded) return; // Wait for translations to load
     const loadTranslations = async () => {
       setIsLoading(true);
       // Wait for the translation file for the current locale to be preloaded
@@ -41,7 +42,7 @@ export default function HomePage() {
     };
 
     loadTranslations();
-  }, [locale]);
+  }, [locale, isTranslationLoaded]);
 
   const createUser = async () => {
     try {
@@ -114,7 +115,7 @@ export default function HomePage() {
         style={{ marginBottom: "1.5rem" }}
       />
 
-      <h1 className="text-3xl font-bold mb-4">
+      <h1 className="text-3xl text-black font-bold mb-4">
         {/* By adding a key using the locale, we force this TranslatedText to remount when locale changes */}
         <TranslatedText key={`app.title-${locale}`} textKey="app.title" />
       </h1>

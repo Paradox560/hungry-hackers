@@ -19,6 +19,8 @@
     "next": "Next",
     "back": "Back",
     "findPantries": "Find Pantries",
+    "title": "Food Assistance Survey",
+    "description": "Help us understand your needs to find the best food assistance options for you.",
     "completion": {
       "title": "Thank you for completing the survey!",
       "description": "Click below to find pantries near you based on your preferences."

@@ -19,6 +19,8 @@
     "next": "Siguiente",
     "back": "Atrás",
     "findPantries": "Encontrar Despensas",
+    "title": "Encuesta de Asistencia Alimentaria",
+    "description": "Ayúdenos a comprender sus necesidades para encontrar las mejores opciones de asistencia alimentaria.",
     "completion": {
       "title": "¡Gracias por completar la encuesta!",
       "description": "Haga clic a continuación para encontrar despensas cerca de usted según sus preferencias."

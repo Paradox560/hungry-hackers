@@ -19,6 +19,8 @@
       "next": "Suivant",
       "back": "Retour",
       "findPantries": "Trouver des réserves alimentaires",
+      "title": "Enquête sur l'aide alimentaire",
+      "description": "Aidez-nous à comprendre vos besoins afin de trouver les solutions d'aide alimentaire les plus adaptées à vos besoins.",
       "completion": {
         "title": "Merci d'avoir complété le sondage !",
         "description": "Cliquez ci-dessous pour trouver des réserves alimentaires près de chez vous selon vos préférences."

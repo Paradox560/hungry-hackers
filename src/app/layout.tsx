@@ -71,7 +71,9 @@ export default function RootLayout({
   useEffect(() => {
     setIsChangingLocale(true);
     preloadTranslations([locale]).then(() => {
-      setAppTitle(translate("app.title", locale) || "Get Food Support Near You");
+      setAppTitle(
+        translate("app.title", locale) || "Get Food Support Near You"
+      );
       setIsChangingLocale(false);
     });
   }, [locale]);
@@ -100,12 +102,12 @@ export default function RootLayout({
 
             <header className="p-4 bg-gray-50 border-b">
               <div className="flex justify-between items-center max-w-7xl mx-auto">
-                <div className="text-xl font-bold">{appTitle}</div>
-                <div>
+                <div className="text-xl text-black font-bold">{appTitle}</div>
+                <div className="flex items-center space-x-3">
                   <select
                     value={locale}
                     onChange={handleLanguageChange}
-                    className="p-2 border rounded-md"
+                    className="p-2 text-black border rounded-md"
                     aria-label="Select language"
                     disabled={isChangingLocale}
                   >
@@ -115,10 +117,12 @@ export default function RootLayout({
                       </option>
                     ))}
                   </select>
+                  <SignedIn>
+                    <div className="ml-2">
+                      <UserButton afterSignOutUrl="/" />
+                    </div>
+                  </SignedIn>
                 </div>
-                <SignedIn>
-                    <UserButton />
-                </SignedIn>
               </div>
             </header>
             {children}
