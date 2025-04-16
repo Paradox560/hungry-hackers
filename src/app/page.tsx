@@ -8,6 +8,7 @@ import {
   Popup,
   useMap,
 } from "react-leaflet";
+import Image from "next/image";
 import L from "leaflet";
 import Papa from "papaparse";
 import "leaflet/dist/leaflet.css";
@@ -92,15 +93,18 @@ const Chatbot: React.FC = () => {
       onClick={handleClick}
       style={{
         position: "fixed",
-        bottom: "20px",
+        bottom: "650px",
         right: "20px",
         cursor: "pointer",
       }}
     >
-      <img
-        src="https://static.vecteezy.com/system/resources/thumbnails/006/692/321/small_2x/chatting-message-icon-template-black-color-editable-chatting-message-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"
+      <Image
+        width={80}
+        height={80}
+        src="/chat_icon.png"
+        // src="https://static.vecteezy.com/system/resources/thumbnails/006/692/321/small_2x/chatting-message-icon-template-black-color-editable-chatting-message-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"
         alt="Chatbot Icon"
-        style={{ width: "50px", height: "50px" }}
+        style={{ width: "100px", height: "100px", zIndex: "1000", margin: "10px"}}
       />
     </div>
   );
@@ -173,7 +177,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div style={{color: "black"}}>
       <div style={{ padding: "10px", backgroundColor: "#f2f2f2" }}>
         <h2 style={{ marginBottom: "5px" }}>🗺️ Find Food Banks Near You</h2>
         <p>
@@ -183,7 +187,7 @@ export default function Home() {
           alimentos cercanos.
         </p>
         <div style={{ marginBottom: "10px" }}>
-          <input
+          <input style={{border: 1}}
             ref={addressRef}
             type="text"
             placeholder="Enter address..."
