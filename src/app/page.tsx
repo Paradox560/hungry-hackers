@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Chatbot from "@/app/components/Chatbot";
+// import Chatbot from "@/app/components/Chatbot";
 import Image from "next/image";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
@@ -10,7 +10,7 @@ import { db } from "../../firebase";
 import Link from "next/link";
 
 export default function HomePage() {
-  const [showChatbot, setShowChatbot] = useState(false);
+  // const [showChatbot, setShowChatbot] = useState(false);
   const { user, isLoaded, isSignedIn } = useUser();
 
   const createUser = async () => {
@@ -83,9 +83,7 @@ export default function HomePage() {
 
       <h1 className="text-3xl font-bold mb-4">Get Food Support Near You</h1>
 
-      {showChatbot ? (
-        <Chatbot />
-      ) : (
+      (
         <>
           <p className="text-lg text-gray-600 mb-6">
             Chat with our AI helper and find nearby food assistance.
@@ -112,7 +110,7 @@ export default function HomePage() {
             </button>
           </div>
         </>
-      )}
+      )
     </main>
   );
 }
