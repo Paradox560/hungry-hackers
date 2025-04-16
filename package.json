@@ -20,6 +20,7 @@
     "next": "15.2.4",
     "papaparse": "^5.5.2",
     "react": "^19.0.0",
+    "react-chatbotify": "^2.0.0-beta.32",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0"
   },
