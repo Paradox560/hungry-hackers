@@ -15,9 +15,11 @@
     "@google/generative-ai": "^0.24.0",
     "@mui/material": "^7.0.2",
     "firebase": "^11.6.0",
+    "leaflet": "^1.9.4",
     "next": "15.2.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
