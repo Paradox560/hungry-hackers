@@ -2,7 +2,10 @@
 
 import type { Site } from './FoodMap'
 import { useState } from 'react'
-import FoodMap from './MapClient'
+import dynamic from 'next/dynamic'
+
+const FoodMap = dynamic(() => import('./MapClient'), { ssr: false })
+
 
 export default function Chatbot() {
   const [step, setStep] = useState(1)
@@ -21,14 +24,28 @@ export default function Chatbot() {
   const handleNext = () => setStep(step + 1)
 
   const handleSubmit = async () => {
-    const res = await fetch('/api/suggestions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(answers),
-    })
-    const data = await res.json()
-    setSuggestions(data)
-  }
+  setSuggestions([
+    {
+      name: 'Unity Health Pantry',
+      address: '123 Main St, Washington, DC',
+      phone: '(202) 555-1234',
+      hours: 'Mon–Fri: 9am–5pm',
+      requirements: 'Bring ID',
+      lat: 38.902,
+      lng: -77.033,
+    },
+    {
+      name: 'Hope Kitchen',
+      address: '456 Elm St, Washington, DC',
+      phone: '(202) 555-9876',
+      hours: 'Tues & Thurs: 12pm–4pm',
+      requirements: 'No ID required',
+      lat: 38.907,
+      lng: -77.0365,
+    }
+  ])
+}
+
 
   return (
     <div className="p-6 max-w-xl mx-auto">
