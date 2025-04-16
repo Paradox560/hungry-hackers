@@ -1,25 +1,18 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMap,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import Image from "next/image";
 import L from "leaflet";
 import Papa from "papaparse";
 import "leaflet/dist/leaflet.css";
+import { useTranslation } from "@/i18n";
+import TranslatedText from "@/components/TranslatedText";
 
 // Fix Leaflet Icons
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-// Ensure Leaflet icon fix runs only on the client side
-
 
 // Interfaces
 interface FoodBank {
@@ -49,7 +42,9 @@ function cleanAddress(raw: string): string {
   return match ? match[0] : raw;
 }
 
-const geocodeAddress = async (address: string): Promise<{
+const geocodeAddress = async (
+  address: string
+): Promise<{
   lat: number;
   lon: number;
 } | null> => {
@@ -100,19 +95,49 @@ const Chatbot: React.FC = () => {
         width={80}
         height={80}
         src="/chat_icon.png"
-        // src="https://static.vecteezy.com/system/resources/thumbnails/006/692/321/small_2x/chatting-message-icon-template-black-color-editable-chatting-message-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"
         alt="Chatbot Icon"
-        style={{ width: "100px", height: "100px", zIndex: "1000", margin: "10px"}}
+        style={{
+          width: "100px",
+          height: "100px",
+          zIndex: "1000",
+          margin: "10px",
+        }}
       />
     </div>
   );
 };
 
 // Main Component
-export default function Home() {
+export default function MapPage() {
   const [center, setCenter] = useState<[number, number]>([38.89511, -77.03637]); // Default DC
   const [foodBanks, setFoodBanks] = useState<FoodBank[]>([]);
   const addressRef = useRef<HTMLInputElement>(null);
+  const [translations, setTranslations] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
+
+  // Load translations
+  useEffect(() => {
+    const loadTranslations = async () => {
+      const keys = [
+        "map.title",
+        "map.description",
+        "map.enterAddress",
+        "map.locate",
+        "map.useMyLocation",
+      ];
+
+      const translatedTexts: Record<string, string> = {};
+      for (const key of keys) {
+        translatedTexts[key] = await t(key);
+      }
+
+      setTranslations(translatedTexts);
+      setIsLoading(false);
+    };
+
+    loadTranslations();
+  }, [t]);
 
   useEffect(() => {
     delete L.Icon.Default.prototype._getIconUrl;
@@ -174,32 +199,28 @@ export default function Home() {
     }
   };
 
+  if (isLoading) {
+    return <div className="p-6 text-center">Loading...</div>;
+  }
+
   return (
-    <div style={{color: "black"}}>
+    <div style={{ color: "black" }}>
       <div style={{ padding: "10px", backgroundColor: "#f2f2f2" }}>
-        <h2 style={{ marginBottom: "5px" }}>🗺️ Find Food Banks Near You</h2>
-        <p>
-          Enter your address and click locate to find nearby food banks.
-          <br />
-          Ingrese su dirección y haga clic en localizar para encontrar bancos de
-          alimentos cercanos.
-        </p>
+        <h2 style={{ marginBottom: "5px" }}>{translations["map.title"]}</h2>
+        <p>{translations["map.description"]}</p>
         <div style={{ marginBottom: "10px" }}>
-          <input style={{border: 1}}
+          <input
             ref={addressRef}
             type="text"
-            placeholder="Enter address..."
-            style={{ padding: "5px", width: "300px" }}
+            placeholder={translations["map.enterAddress"]}
+            style={{ padding: "5px", width: "300px", border: "1px solid #ccc" }}
           />
-          <button
-            onClick={handleAddressSearch}
-            style={{ marginLeft: "5px" }}
-          >
-            📌 Locate
+          <button onClick={handleAddressSearch} style={{ marginLeft: "5px" }}>
+            {translations["map.locate"]}
           </button>
         </div>
         <button onClick={locateUser} style={{ margin: "10px" }}>
-          📍 Use My Location
+          {translations["map.useMyLocation"]}
         </button>
       </div>
 

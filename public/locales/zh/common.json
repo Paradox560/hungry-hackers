@@ -1,0 +1,79 @@
+{
+    "app": {
+      "title": "在您附近获取食品支持",
+      "description": "与我们的AI助手聊天，查找您附近的食品援助。",
+      "getStarted": "开始使用",
+      "signUp": "注册以开始使用",
+      "learnMore": "了解更多"
+    },
+    "map": {
+      "title": "🗺️ 查找您附近的食品银行",
+      "description": "输入您的地址并点击定位，查找附近的食品银行。",
+      "enterAddress": "输入地址...",
+      "locate": "📌 定位",
+      "useMyLocation": "📍 使用我的位置"
+    },
+    "survey": {
+      "progress": "第 {{current}} 步，共 {{total}} 步",
+      "complete": "{{percentage}}% 完成",
+      "next": "下一步",
+      "back": "返回",
+      "findPantries": "查找食品储藏处",
+      "completion": {
+        "title": "感谢您完成调查！",
+        "description": "点击下方根据您的偏好查找您附近的食品储藏处。"
+      },
+      "steps": {
+        "location": {
+          "title": "位置信息",
+          "question": "📍 您的地址或位于何处？",
+          "placeholder": "输入您的地址或社区"
+        },
+        "date": {
+          "title": "日期偏好",
+          "question": "📅 您想今天获取食物还是本周的其他一天？",
+          "placeholder": "例如，今天，星期五，下周二"
+        },
+        "time": {
+          "title": "时间偏好",
+          "question": "⏰ 哪个时段最适合您？",
+          "placeholder": "例如，早上，下午2点，晚上"
+        },
+        "transport": {
+          "title": "交通出行方式",
+          "question": "🚗 您是否有私家车或公共交通工具？",
+          "selectOption": "请选择一个选项",
+          "hasTransport": "是的，我有交通工具",
+          "noTransport": "不，我没有交通工具",
+          "limitedTransport": "我的交通选项有限"
+        },
+        "diet": {
+          "title": "饮食需求",
+          "question": "🥗 您有任何饮食限制或偏好吗？",
+          "placeholder": "例如，糖尿病适用，清真，低钠，素食主义者"
+        },
+        "kitchen": {
+          "title": "厨房使用情况",
+          "question": "🏠 您是否可以使用厨房存储或烹饪食物？",
+          "selectOption": "请选择一个选项",
+          "fullAccess": "是的，完全可以使用厨房",
+          "limitedAccess": "有限使用（仅微波炉/冰箱）",
+          "noAccess": "没有厨房使用权限"
+        },
+        "services": {
+          "title": "额外服务",
+          "question": "🧾 您是否需要任何额外服务？",
+          "placeholder": "例如，住房，职业培训，托儿服务"
+        },
+        "pickup": {
+          "title": "最后细节",
+          "question": "👨‍👩‍👧 亲戚或朋友能为您取食物吗？",
+          "selectOption": "请选择一个选项",
+          "canPickup": "是的，有人可以替我取餐",
+          "cannotPickup": "不，我需要自己取餐",
+          "maybePickup": "可能，取决于时间安排"
+        }
+      }
+    }
+  }
+  

@@ -1,0 +1,79 @@
+{
+    "app": {
+      "title": "Obtenez un soutien alimentaire près de chez vous",
+      "description": "Discutez avec notre assistant IA et trouvez une aide alimentaire à proximité.",
+      "getStarted": "Commencer",
+      "signUp": "Inscrivez-vous pour commencer",
+      "learnMore": "En savoir plus"
+    },
+    "map": {
+      "title": "🗺️ Trouvez des banques alimentaires près de chez vous",
+      "description": "Entrez votre adresse et cliquez sur localiser pour trouver des banques alimentaires à proximité.",
+      "enterAddress": "Entrez l'adresse...",
+      "locate": "📌 Localiser",
+      "useMyLocation": "📍 Utiliser ma position"
+    },
+    "survey": {
+      "progress": "Étape {{current}} sur {{total}}",
+      "complete": "{{percentage}}% terminé",
+      "next": "Suivant",
+      "back": "Retour",
+      "findPantries": "Trouver des réserves alimentaires",
+      "completion": {
+        "title": "Merci d'avoir complété le sondage !",
+        "description": "Cliquez ci-dessous pour trouver des réserves alimentaires près de chez vous selon vos préférences."
+      },
+      "steps": {
+        "location": {
+          "title": "Informations de localisation",
+          "question": "📍 Quelle est votre adresse ou votre localisation ?",
+          "placeholder": "Entrez votre adresse ou votre quartier"
+        },
+        "date": {
+          "title": "Préférence de date",
+          "question": "📅 Voulez-vous de la nourriture aujourd'hui ou un autre jour cette semaine ?",
+          "placeholder": "ex. Aujourd'hui, vendredi, mardi prochain"
+        },
+        "time": {
+          "title": "Préférence horaire",
+          "question": "⏰ À quel moment de la journée cela vous convient-il le mieux ?",
+          "placeholder": "ex. Matin, 14h, soir"
+        },
+        "transport": {
+          "title": "Accès aux transports",
+          "question": "🚗 Avez-vous accès à un véhicule privé ou aux transports en commun ?",
+          "selectOption": "Veuillez sélectionner une option",
+          "hasTransport": "Oui, j'ai un moyen de transport",
+          "noTransport": "Non, je n'ai pas de moyen de transport",
+          "limitedTransport": "J'ai des options de transport limitées"
+        },
+        "diet": {
+          "title": "Besoins alimentaires",
+          "question": "🥗 Avez-vous des restrictions ou des préférences alimentaires ?",
+          "placeholder": "ex. diabétique, halal, faible en sodium, végétarien"
+        },
+        "kitchen": {
+          "title": "Accès à la cuisine",
+          "question": "🏠 Avez-vous accès à une cuisine pour stocker ou préparer des aliments ?",
+          "selectOption": "Veuillez sélectionner une option",
+          "fullAccess": "Oui, accès complet à la cuisine",
+          "limitedAccess": "Accès limité (seulement micro-ondes/réfrigérateur)",
+          "noAccess": "Pas d'accès à la cuisine"
+        },
+        "services": {
+          "title": "Services supplémentaires",
+          "question": "🧾 Avez-vous besoin de services supplémentaires ?",
+          "placeholder": "ex. logement, formation professionnelle, garde d'enfants"
+        },
+        "pickup": {
+          "title": "Détails finaux",
+          "question": "👨‍👩‍👧 Un proche ou un ami peut-il aller chercher la nourriture pour vous ?",
+          "selectOption": "Veuillez sélectionner une option",
+          "canPickup": "Oui, quelqu'un peut aller la chercher pour moi",
+          "cannotPickup": "Non, je dois aller la chercher moi-même",
+          "maybePickup": "Peut-être, cela dépend de l'horaire"
+        }
+      }
+    }
+}
+  

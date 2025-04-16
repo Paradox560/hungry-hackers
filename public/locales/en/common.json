@@ -1,0 +1,78 @@
+{
+  "app": {
+    "title": "Get Food Support Near You",
+    "description": "Chat with our AI helper and find nearby food assistance.",
+    "getStarted": "Get Started",
+    "signUp": "Sign up to Get Started",
+    "learnMore": "Learn More"
+  },
+  "map": {
+    "title": "🗺️ Find Food Banks Near You",
+    "description": "Enter your address and click locate to find nearby food banks.",
+    "enterAddress": "Enter address...",
+    "locate": "📌 Locate",
+    "useMyLocation": "📍 Use My Location"
+  },
+  "survey": {
+    "progress": "Step {{current}} of {{total}}",
+    "complete": "{{percentage}}% Complete",
+    "next": "Next",
+    "back": "Back",
+    "findPantries": "Find Pantries",
+    "completion": {
+      "title": "Thank you for completing the survey!",
+      "description": "Click below to find pantries near you based on your preferences."
+    },
+    "steps": {
+      "location": {
+        "title": "Location Information",
+        "question": "📍 What is your address or location?",
+        "placeholder": "Enter your address or neighborhood"
+      },
+      "date": {
+        "title": "Date Preference",
+        "question": "📅 Do you want food today or another day this week?",
+        "placeholder": "e.g., Today, Friday, Next Tuesday"
+      },
+      "time": {
+        "title": "Time Preference",
+        "question": "⏰ What time of day works best for you?",
+        "placeholder": "e.g., Morning, 2pm, Evening"
+      },
+      "transport": {
+        "title": "Transportation Access",
+        "question": "🚗 Do you have access to a private vehicle or public transit?",
+        "selectOption": "Please select an option",
+        "hasTransport": "Yes, I have transportation",
+        "noTransport": "No, I don't have transportation",
+        "limitedTransport": "I have limited transportation options"
+      },
+      "diet": {
+        "title": "Dietary Needs",
+        "question": "🥗 Do you have any dietary restrictions or preferences?",
+        "placeholder": "e.g., diabetic, halal, low sodium, vegetarian"
+      },
+      "kitchen": {
+        "title": "Kitchen Access",
+        "question": "🏠 Do you have access to a kitchen to store or cook food?",
+        "selectOption": "Please select an option",
+        "fullAccess": "Yes, full kitchen access",
+        "limitedAccess": "Limited access (microwave/refrigerator only)",
+        "noAccess": "No kitchen access"
+      },
+      "services": {
+        "title": "Additional Services",
+        "question": "🧾 Do you need any additional services?",
+        "placeholder": "e.g., housing, job training, childcare"
+      },
+      "pickup": {
+        "title": "Final Details",
+        "question": "👨‍👩‍👧 Can a relative or friend pick up food for you?",
+        "selectOption": "Please select an option",
+        "canPickup": "Yes, someone can pick up for me",
+        "cannotPickup": "No, I need to pick up myself",
+        "maybePickup": "Maybe, depends on timing"
+      }
+    }
+  }
+}
