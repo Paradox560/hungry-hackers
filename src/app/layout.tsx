@@ -23,15 +23,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-      </body>
-    </html>
-  )
+  // return (
+  //   <html lang="en">
+  //     <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+  //       {children}
+  //     </body>
+  //   </html>
+  // )
   
-  return /* (
+  return (
     <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <html lang="en">
         <body
@@ -42,4 +42,4 @@ export default function RootLayout({
       </html>
     </ClerkProvider>
   );
-*/}
+}
