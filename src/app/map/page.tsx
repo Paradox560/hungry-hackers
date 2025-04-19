@@ -15,6 +15,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Ensure Leaflet icon fix runs only on the client side
 import ChatBot from 'react-chatbotify'
+// import dynamic from "next/dynamic";
 
 // Interfaces
 interface FoodBank {
@@ -43,6 +44,8 @@ function cleanAddress(raw: string): string {
   const match = raw.match(/\d{1,5} .*/);
   return match ? match[0] : raw;
 }
+
+// const MapClient = dynamic(() => import("@/app/components/MapClient"), { ssr: false });
 
 const geocodeAddress = async (address: string): Promise<{
   lat: number;
@@ -84,56 +87,56 @@ const flow={
     path: "gemini_call1"
   },
   gemini_call1: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Hello! I'm the Capital Area Foodbank's Helper ChatBot. I can help you find food pantries near you. To get started, could you please share your address or general location (like your neighborhood, zip code, or a major intersection)?"
     },
     path: "gemini_call2"
   },
   gemini_call2: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Got it, thank you Suhan! That location helps narrow down the search. Next, are you looking to get food today, or would another day this week work better for you?"
     },
     path: "gemini_call3"
   },
   gemini_call3: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Okay, Tuesday. What time of day on Tuesday would you like to pick up food? For example, morning, afternoon, or evening?"
     },
     path: "gemini_call4"
   },
   gemini_call4: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Okay, Tuesday morning. Are you able to travel to a food pantry using a private vehicle or public transit?"
     },
     path: "gemini_call5"
   },
   gemini_call5: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Great, having a vehicle gives you more options.Next, do you have any dietary restrictions or diet-related illnesses? For example, are you diabetic, do you have high blood pressure, need low-sodium or low-sugar options, prefer mostly fresh produce, or follow a Halal diet?"
     },
     path: "gemini_call6"
   },
   gemini_call6: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Okay, no dietary restrictions. Do you have access to a kitchen where you can store and/or cook food?"
     },
     path: "gemini_call7"
   },
   gemini_call7: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Okay, you have access to a kitchen. Do you also need help finding any other services, like housing assistance, help with government benefits, health care, job training, or anything similar?"
     },
     path: "gemini_call8"
   },
   gemini_call8: {
-    message: async (params) => {
+    message: async () => {
       await sleep(10000);
       return "Children of Mine, Address: 2263 Mount View Place, SE, Washington DC 20020. This location matches your address exactly and is open on Tuesday mornings during the 2nd and 4th weeks of the month. No specific requirements listed. Please call ahead to confirm they are operating this specific Tuesday and have food available. Walk-up service. phone: (202) 374-6029"
     },
@@ -179,7 +182,7 @@ const Chatbot = () => {
 		maxWidth: 300
 	}
 
-	const flow={
+	const flow = {
 		start: {
 			message: "Hello there! What is your name?",
 			function: (params) => setForm({...form, name: params.userInput}),
@@ -232,7 +235,14 @@ const Chatbot = () => {
 		},
 	}
 	return (
-		<ChatBot settings={{general: {embedded: true}, chatHistory: {storageKey: "example_basic_form"}}} flow={flow}/>
+    <ChatBot settings={{
+      general: {
+        embedded: true
+      },
+      chatHistory: {
+        storageKey: "example_basic_form"
+      }
+    }} flow={flow} />
 	);
 };
 
@@ -304,7 +314,6 @@ export default function MapPage() {
   }, [locale, isLoaded]); // Added locale here
 
   useEffect(() => {
-    delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: markerIcon2x,
       iconUrl: markerIcon,
@@ -316,7 +325,7 @@ export default function MapPage() {
     const files = ["shopping_partners.csv", "mobile_markets.csv"];
     const allAddresses: string[] = [];
 
-    for (let file of files) {
+    for (const file of files) {
       const response = await fetch(`/data/${file}`);
       const text = await response.text();
       const parsed = Papa.parse(text, { header: true });
@@ -328,7 +337,7 @@ export default function MapPage() {
     }
 
     const geocoded: FoodBank[] = [];
-    for (let address of allAddresses) {
+    for (const address of allAddresses) {
       const coords = await geocodeAddress(address);
       if (coords) {
         geocoded.push({ ...coords, address });
@@ -364,7 +373,7 @@ export default function MapPage() {
   };
 
   return (
-    (!isLoaded ? (
+    ((!isLoaded && typeof window !== "undefined") ? (
       <div className="p-6 text-center">Loading...</div>
      ) : (
     <div style={{ color: "black" }}>
@@ -422,12 +431,14 @@ export default function MapPage() {
           attribution="© OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {foodBanks.map((fb, idx) => (
+            {foodBanks.map((fb, idx) => (
+          console.log("Food Bank:", fb.address, fb.lat, fb.lon),
           <Marker key={idx} position={[fb.lat, fb.lon]}>
             <Popup>{fb.address}</Popup>
           </Marker>
         ))}
       </MapContainer>
+          {/* <MapClient center={center} foodBanks={foodBanks} /> */}
       <ChatBot settings={{ header: { title: <div>Food Bank Helper</div> } }} flow={flow} />
     </div>
      ))
