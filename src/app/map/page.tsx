@@ -390,7 +390,7 @@ export default function MapPage() {
     <div style={{ color: "black" }}>
       <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 shadow-md">
         <h2 className="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-          <span className="mr-1">🗺️</span>
+          
           {translations["map.title"]}
         </h2>
         
