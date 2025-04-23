@@ -3,10 +3,14 @@ import os
 from google import genai
 # import google.generativeai as genai
 from google.genai import types
-# from google.generativeai import types
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def generate(user_message):
+    user_message = user_message["userInput"]
+    print(user_message)
     print(os.environ.get("GEMINI_API_KEY"))
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
@@ -45,13 +49,8 @@ def generate(user_message):
                             "phone": genai.types.Schema(
                                 type = genai.types.Type.STRING,
                             ),
-                            "notes": genai.types.Schema(
-                                type = genai.types.Type.OBJECT,
-                                properties = {
-                                    "note": genai.types.Schema(
-                                        type = genai.types.Type.STRING,
-                                    ),
-                                },
+                            "note": genai.types.Schema(
+                                type = genai.types.Type.STRING,
                             ),
                         },
                     ),

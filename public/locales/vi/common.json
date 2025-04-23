@@ -1,0 +1,81 @@
+{
+    "app": {
+      "title": "Nhận Hỗ Trợ Thực Phẩm Gần Bạn",
+      "description": "Trò chuyện với trợ lý AI của chúng tôi và tìm sự hỗ trợ thực phẩm gần bạn.",
+      "getStarted": "Bắt đầu",
+      "signUp": "Đăng ký để bắt đầu",
+      "learnMore": "Tìm hiểu thêm"
+    },
+    "map": {
+      "title": "🗺️ Tìm Ngân Hàng Thực Phẩm Gần Bạn",
+      "description": "Nhập địa chỉ của bạn và nhấp tìm để tìm ngân hàng thực phẩm gần đó.",
+      "enterAddress": "Nhập địa chỉ...",
+      "locate": "📌 Xác định vị trí",
+      "useMyLocation": "📍 Sử dụng vị trí của tôi"
+    },
+    "survey": {
+      "progress": "Bước {{current}} trên {{total}}",
+      "complete": "{{percentage}}% Hoàn thành",
+      "next": "Tiếp theo",
+      "back": "Quay lại",
+      "findPantries": "Tìm kho thực phẩm",
+      "title": "Khảo sát hỗ trợ thực phẩm",
+      "description": "Giúp chúng tôi hiểu nhu cầu của bạn để tìm ra các lựa chọn hỗ trợ thực phẩm tốt nhất cho bạn.",
+      "completion": {
+        "title": "Cảm ơn bạn đã hoàn thành khảo sát!",
+        "description": "Nhấp vào bên dưới để tìm các kho thực phẩm gần bạn dựa trên sở thích của bạn."
+      },
+      "steps": {
+        "location": {
+          "title": "Thông tin địa điểm",
+          "question": "📍 Địa chỉ hoặc vị trí của bạn là gì?",
+          "placeholder": "Nhập địa chỉ hoặc khu vực của bạn"
+        },
+        "date": {
+          "title": "Ưu tiên ngày",
+          "question": "📅 Bạn muốn thực phẩm hôm nay hay một ngày khác trong tuần này?",
+          "placeholder": "ví dụ: Hôm nay, Thứ sáu, Thứ ba tuần sau"
+        },
+        "time": {
+          "title": "Ưu tiên thời gian",
+          "question": "⏰ Khoảng thời gian nào trong ngày phù hợp nhất với bạn?",
+          "placeholder": "ví dụ: Buổi sáng, 2 giờ chiều, Buổi tối"
+        },
+        "transport": {
+          "title": "Phương tiện giao thông",
+          "question": "🚗 Bạn có phương tiện cá nhân hoặc phương tiện giao thông công cộng không?",
+          "selectOption": "Vui lòng chọn một tùy chọn",
+          "hasTransport": "Có, tôi có phương tiện giao thông",
+          "noTransport": "Không, tôi không có phương tiện giao thông",
+          "limitedTransport": "Tôi có hạn chế về phương tiện giao thông"
+        },
+        "diet": {
+          "title": "Nhu cầu dinh dưỡng",
+          "question": "🥗 Bạn có bất kỳ hạn chế hoặc sở thích ăn uống nào không?",
+          "placeholder": "ví dụ: người tiểu đường, halal, ít muối, ăn chay"
+        },
+        "kitchen": {
+          "title": "Tiếp cận bếp",
+          "question": "🏠 Bạn có thể sử dụng bếp để lưu trữ hoặc nấu thực phẩm không?",
+          "selectOption": "Vui lòng chọn một tùy chọn",
+          "fullAccess": "Có, truy cập đầy đủ bếp",
+          "limitedAccess": "Truy cập hạn chế (chỉ có lò vi sóng/tủ lạnh)",
+          "noAccess": "Không có bếp"
+        },
+        "services": {
+          "title": "Dịch vụ bổ sung",
+          "question": "🧾 Bạn có cần thêm dịch vụ nào không?",
+          "placeholder": "ví dụ: nhà ở, đào tạo nghề, chăm sóc trẻ em"
+        },
+        "pickup": {
+          "title": "Chi tiết cuối cùng",
+          "question": "👨‍👩‍👧 Một người thân hoặc bạn có thể đến nhận thực phẩm thay bạn không?",
+          "selectOption": "Vui lòng chọn một tùy chọn",
+          "canPickup": "Có, ai đó có thể đến nhận thay tôi",
+          "cannotPickup": "Không, tôi cần tự đến nhận",
+          "maybePickup": "Có thể, tùy thuộc vào thời gian"
+        }
+      }
+    }
+  }
+  
