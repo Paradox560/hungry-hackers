@@ -15,6 +15,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Ensure Leaflet icon fix runs only on the client side
 import ChatBot from 'react-chatbotify'
+import Loading from "../components/Loading";
 // import dynamic from "next/dynamic";
 
 // Interfaces
@@ -374,7 +375,7 @@ export default function MapPage() {
 
   return (
     ((!isLoaded && typeof window !== "undefined") ? (
-      <div className="p-6 text-center">Loading...</div>
+      <Loading />
      ) : (
     <div style={{ color: "black" }}>
       <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 shadow-md">

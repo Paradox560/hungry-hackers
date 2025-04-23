@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { useTranslation } from "@/i18n";
 import TranslatedText from "@/components/TranslatedText";
+import Loading from "../components/Loading";
 
 export default function Chatbot() {
   const [step, setStep] = useState(1);
@@ -93,17 +94,12 @@ export default function Chatbot() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-8 w-8 bg-blue-400 rounded-full mb-4"></div>
-          <div className="text-gray-600">Loading translations...</div>
-        </div>
-      </div>
+      <Loading />
     );
   }
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4">
+    <div className="min-h-screen bg-[#E8F5E9] py-12 px-4">
       <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden border border-gray-100">
         {/* Page header */}
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-gray-200">
@@ -161,7 +157,7 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, location: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 placeholder-gray-400 px-4 py-2 w-full mb-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder={translations["survey.steps.location.placeholder"]}
                 aria-required="true"
               />
