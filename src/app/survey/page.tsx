@@ -172,11 +172,6 @@ export default function Chatbot() {
   const totalSteps = 8;
   const progress = (step / totalSteps) * 100;
 
-  // Function to get placeholder text based on user data
-  const getPlaceholder = (field: keyof UserAnswers, defaultText: string) => {
-    return answers[field] ? answers[field] : defaultText;
-  };
-
   if (isLoading) {
     return <Loading />;
   }
