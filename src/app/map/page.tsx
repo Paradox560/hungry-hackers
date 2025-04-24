@@ -9,15 +9,28 @@ import "leaflet/dist/leaflet.css";
 import { useTranslation } from "@/i18n";
 
 // Fix Leaflet Icons
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+// import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+// import markerIcon from "leaflet/dist/images/marker-icon.png";
+// import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Ensure Leaflet icon fix runs only on the client side
 import ChatBot from 'react-chatbotify'
 import Loading from "../components/Loading";
 // import dynamic from "next/dynamic";
+import { icon } from "leaflet"
 
+const markerIcon2x = icon({
+  iconUrl: "/marker-icon-2x.png",
+  iconSize: [32, 32],
+})
+const markerIcon = icon({
+  iconUrl: "/marker-icon.png",
+  iconSize: [32, 32],
+})
+const markerShadow = icon({
+  iconUrl: "/marker-shadow.png",
+  iconSize: [32, 32],
+})
 // Interfaces
 interface FoodBank {
   lat: number;
@@ -27,6 +40,77 @@ interface FoodBank {
 
 interface MapUpdaterProps {
   center: [number, number];
+}
+
+const address_to_coord = {
+  "421 Clifford Ave Alexandria VA 22305": {lat: 38.8320336, lon:-77.0530997}, 
+"9832 Piscataway Road Clinton MD 20735": {lat: 38.7537896, lon:-76.9223848}, 
+"801 University Blvd W Silver Spring MD 20901": {lat: 39.0412414, lon:-77.0524083}, 
+"9801 Livingston Road Fort Washington MD 20744": {lat: 38.7556609, lon:-77.0009664}, 
+"3845 South Capitol St SW Washington DC 20032": {lat: 38.8341748, lon:-77.0089621}, 
+"6300 9th St NW  Washington DC  DC 20011": {lat: 38.966347, lon:-77.0262483}, 
+"1501 Columbia Rd NW Washington DC 20009": {lat: 38.9270507, lon:-77.0359884}, 
+"6012 Ager Road Hyattsville MD 20782": {lat: 38.9624832, lon:-76.9698595}, 
+"3103 Shepherd Street Mount Rainier MD 20712": {lat: 38.9395435, lon:-76.9636211}, 
+"10845 Lanham Severn Road Glenn Dale MD 20769": {lat: 38.9859145, lon:-76.8210757}, 
+"1 Wells Ave Gaithersburg MD 20877": {lat: 39.1409984, lon:-77.1923173}, 
+"2815 Old Lee Hwy Fairfax Fairfax VA 22031": {lat: 38.8757888, lon:-77.2392203}, 
+"5600 Old Branch Avenue Camp Springs MD 20748": {lat: 38.8130599, lon:-76.9130871}, 
+"3209 5th Street SE Washington DC 20032": {lat: 38.842617, lon:-76.9997498}, 
+"1908 North Capitol Street NW Washington DC 20002": {lat: 38.9157583, lon:-77.0095097}, 
+"11310 Fort Washington Road Fort Washington MD 20744": {lat: 38.7396063, lon:-77.0000327}, 
+"6 Capitol Heights Blvd Capitol Heights MD 20743": {lat: 38.8852076, lon:-76.9138748}, 
+"1625 Olive Street NE Washington DC 20019": {lat: 38.9104865, lon:-76.9334733}, 
+"2700 19th Street South Arlington VA 22204": {lat: 38.8541288, lon:-77.0831513}, 
+"2101 Shadyside Ave  Suitland MD  20746": {lat: 38.862301, lon:-76.932234}, 
+"25 Quire Ave Capitol Heights MD 20743": {lat: 38.8863372, lon:-76.9120974}, 
+"5 Thomas Circle NW Washington DC 20005": {lat: 38.9064998, lon:-77.0327273}, 
+"8899 Sudley Road Manassas VA 20110": {lat: 38.7637627, lon:-77.4783669}, 
+"1925 Mitchellville Rd Bowie MD 20716": {lat: 38.9156728, lon:-76.7216523}, 
+"5757 Temple Hill Road Camp Springs MD 20748": {lat: 38.8040834, lon:-76.9332718}, 
+"4606 16th St NW Washington DC 20011": {lat: 38.9468507, lon:-77.036771}, 
+"2938 Prosperity Avenue Fairfax VA 22031": {lat: 38.8721204, lon:-77.2368594}, 
+"910 Addison Road Capitol Heights MD 20743": {lat: 38.8705089, lon:-76.894135}, 
+"25 Crescent Rd Greenbelt MD 20770": {lat: 39.0005734, lon:-76.8773857}, 
+"71 O ST NW Washington DC 20002": {lat: 38.9089563, lon:-77.0114316}, 
+"620 Michigan Ave NE Washington DC 20064": {lat: 38.9391024, lon:-76.9999642}, 
+"5819 Eastpine Dr Riverdale MD 20737": {lat: 38.9583116, lon:-76.9065907}, 
+"6100 Georgia Avenue NW  Washington  DC 20011": {lat: 38.9641578, lon:-77.0281926}, 
+"1600 Saint Camillus Drive  Silver Spring MD 20903": {lat: 39.0094437, lon:-76.9816625}, 
+"5033 Wilson Lane Bethesda MD 20814": {lat: 38.9896048, lon:-77.1229785}, 
+"1810 16th St NW Washington DC 20009": {lat: 38.9143737, lon:-77.0369513}, 
+"1600 Morris Rd SE Washington DC 20020": {lat: 38.8578053, lon:-76.981506}, 
+"12701 Veirs Mill Rockville MD 20853": {lat: 39.0737472, lon:-77.1124428}, 
+"9350 Main Street Manassas VA 20110": {lat: 38.7516111, lon:-77.4720402}, 
+"308 Gorman Ave Laurel  MD 20707": {lat: 39.0984608, lon:-76.8506114}, 
+"814 Alabama Ave SE Washington DC 20032": {lat: 38.8440468, lon:-76.9938772}, 
+"11700 Beltsville Drive Beltsville MD 20705": {lat: 39.052639, lon:-76.9355426}, 
+"4115 Alabama Ave SE  Washington DC 20019": {lat: 38.8706096, lon:-76.9422796}, 
+"1525 Newton St NW Washington DC 20910": {lat: 38.933592, lon:-77.0355665}, 
+"220 Highview Place SE  Washington DC 20032": {lat: 38.8415051, lon:-77.0045614}, 
+"4303 13th st NE Washington DC 20017": {lat: 38.9420099, lon:-76.988045}, 
+"3890 Cameron Street Dumfries Va 22026": {lat: 38.5686422, lon:-77.3287835}, 
+"6801 Walker Mill Rd Capitol Heights MD 20743": {lat: 38.8686339, lon:-76.8906355}, 
+"4915 Saint Barnabas Road Temple Hills MD 20748": {lat: 38.8219741, lon:-76.9565649}, 
+"2260 York Drive Woodbridge VA 22191": {lat: 38.65418, lon:-77.279687}, 
+"304 East Church Road Sterling VA 20164": {lat: 39.0078829, lon:-77.3928168}, 
+"1325 Maryland Ave NE Washington DC 20002": {lat: 38.8990226, lon:-76.9864891}, 
+"6304 Lee Chapel Rd Burke VA 22015": {lat: 38.7810083, lon:-77.2771312}, 
+"9155 Richmond Hwy Fort Belvoir VA 22060": {lat: 38.7168981, lon:-77.1326408}, 
+"1920 G Street NW Washington DC 20006": {lat: 38.8980713, lon:-77.0446813}, 
+"805 Brightseat Rd Landover MD 20785": {lat: 38.9160199, lon:-76.8603179}, 
+"6608 Wilkins Place Forestville MD 20747": {lat: 38.840773, lon:-76.8932991}, 
+"4900 Connecticut Ave NW  Washington DC  20008": {lat: 38.954414, lon:-77.069584}, 
+"5340 Baltimore Ave Hyattsville MD 20781": {lat: 38.9551316, lon:-76.940885}, 
+"6210 Chillum Place NW Washington DC 20011": {lat: 38.9660472, lon:-77.0111547}, 
+"1100 Florida Ave NE Washington DC 20002": {lat: 38.9036929, lon:-76.9915544}, 
+"10100 Old Georgetown Road Bethesda MD 20814": {lat: 39.0016497, lon:-77.1098522}, 
+"1400 G St Woodbridge  VA 22191": {lat: 38.6606663, lon:-77.2529184}, 
+"2465 Alabama Ave SE Washington DC 20020": {lat: 38.8546279, lon:-76.9696303}, 
+"880 Eastern Ave  NE Washington DC 20019": {lat: 38.9070891, lon:-76.9275424}, 
+"11416 Cedar Lane Beltsville MD 20705": {lat: 39.0423799, lon:-76.9181754}, 
+"317 N Payne Street Alexandria VA 22314": {lat: 38.8087712, lon:-77.0525098}, 
+"12604 New Hampshire Avenue Silver Spring MD 20904": {lat: 39.0761335, lon:-77.0019544}, 
 }
 
 // MapUpdater Component
@@ -55,7 +139,7 @@ const geocodeAddress = async (address: string): Promise<{
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
     address
   )}`;
-
+  console.log("address" + url);
   try {
     const response = await fetch(url, {
       headers: {
@@ -77,10 +161,6 @@ const geocodeAddress = async (address: string): Promise<{
 
   return null;
 };
-
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 interface aiResponse {
   address: string, 
@@ -341,6 +421,9 @@ export default function MapPage() {
       const response = await fetch(`/data/${file}`);
       const text = await response.text();
       const parsed = Papa.parse(text, { header: true });
+
+      console.log("parsed");
+      console.log(parsed);
       parsed.data.forEach((row: any) => {
         if (row["Shipping Address"]) {
           allAddresses.push(cleanAddress(row["Shipping Address"]));
@@ -348,16 +431,27 @@ export default function MapPage() {
       });
     }
 
+    // console.log("shipping");
+    // console.log(allAddresses);
+    
     const geocoded: FoodBank[] = [];
+    for (const [address, coords] of Object.entries(address_to_coord)) {
+      geocoded.push({ ...coords, address });
+    }
+
     for (const address of allAddresses) {
       const coords = await geocodeAddress(address);
       if (coords) {
         geocoded.push({ ...coords, address });
+        setFoodBanks(geocoded);
       } else {
         console.warn("Could not geocode:", address);
       }
     }
 
+    console.log("geocoded");
+    console.log(geocoded);
+    
     setFoodBanks(geocoded);
   };
 
@@ -391,7 +485,7 @@ export default function MapPage() {
     <div style={{ color: "black" }}>
       <div className="bg-gradient-to-r from-blue-50 to-green-50 p-4 shadow-md">
         <h2 className="text-xl font-semibold text-gray-800 mb-2 flex items-center">
-          <span className="mr-1">🗺️</span>
+          
           {translations["map.title"]}
         </h2>
         
@@ -445,7 +539,7 @@ export default function MapPage() {
         />
             {foodBanks.map((fb, idx) => (
           console.log("Food Bank:", fb.address, fb.lat, fb.lon),
-          <Marker key={idx} position={[fb.lat, fb.lon]}>
+          <Marker icon={markerIcon} key={idx} position={[fb.lat, fb.lon]}>
             <Popup>{fb.address}</Popup>
           </Marker>
         ))}
