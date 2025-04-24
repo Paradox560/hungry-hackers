@@ -1,0 +1,83 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.map-container {
+  display: flex;               
+  justify-content: center;     
+  align-items: center;        
+  height: 100vh;             
+  width: 100%;                
+  position: relative;         
+}
+
+.leaflet-container {
+  width: 100%;               
+  height: 100%;               
+}
+
+
+.header {
+  display: flex;               /* Use flexbox to align items */
+  align-items: center;         /* Center items vertically */
+  justify-content: space-between; /* Space out title and form */
+  margin-bottom: 10px;        /* Add space below the header */
+}
+
+.map-title {
+  text-align: center;          /* Center the title text */
+  margin-bottom: 10px;        /* Space below the title */
+  margin-top: 20px;           /* Space above the title */
+}
+
+.instructions {
+  text-align: center;          /* Center the instructions */
+  margin-bottom: 20px;        /* Space below instructions */
+  font-size: 14px;            /* Adjust font size */
+}
+
+.address-form {
+  display: flex;               /* Use flexbox for input and button */
+  justify-content: center;     /* Center the form elements */
+  margin: 0 auto;             /* Center the form in the container */
+}
+
+.address-form input {
+  margin-right: 10px;         /* Space between input and button */
+  padding: 5px;               /* Add padding for better appearance */
+}

@@ -15,11 +15,13 @@
     "@google/generative-ai": "^0.24.0",
     "@mui/material": "^7.0.2",
     "firebase": "^11.6.0",
+    "fs": "^0.0.1-security",
     "leaflet": "^1.9.4",
     "next": "15.2.4",
+    "node-fetch": "^3.3.2",
     "papaparse": "^5.5.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
