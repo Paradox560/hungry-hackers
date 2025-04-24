@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,10 +10,12 @@ import { db } from "../../firebase";
 import Link from "next/link";
 import { useTranslation, preloadTranslations } from "@/i18n"; // Note the additional preloadTranslations import
 import TranslatedText from "@/components/TranslatedText";
+import Loading from "./components/Loading";
 
 export default function HomePage() {
   const { user, isLoaded, isSignedIn } = useUser();
   const { t, locale, isLoaded: isTranslationLoaded } = useTranslation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,7 +26,7 @@ export default function HomePage() {
       setIsLoading(true);
       // Wait for the translation file for the current locale to be preloaded
       await preloadTranslations([locale]);
-      
+
       const keys = [
         "app.title",
         "app.description",
@@ -64,19 +67,15 @@ export default function HomePage() {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.primaryEmailAddress?.emailAddress,
-          ingredients: {},
           isActive: false,
-          schedule: {
-            monday: { start: "", end: "" },
-            tuesday: { start: "", end: "" },
-            wednesday: { start: "", end: "" },
-            thursday: { start: "", end: "" },
-            friday: { start: "", end: "" },
-            saturday: { start: "", end: "" },
-            sunday: { start: "", end: "" },
-          },
-          location: "Not set",
-          dietaryRestrictions: {},
+          location: "",
+          day: "",
+          time: "",
+          hasTransport: "",
+          dietary: "",
+          hasKitchen: "",
+          services: "",
+          canSomeonePickUp: "",
           language: locale, // Use the selected language
           culturalBackground: "Not set",
         };
@@ -102,30 +101,29 @@ export default function HomePage() {
   }, [isSignedIn, isLoaded, user]);
 
   if (isLoading) {
-    return <div className="p-6 text-center">Loading...</div>;
+    return <Loading />;
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center bg-white text-center p-8">
-      <Image
-        src="/cafb-logo.png"
-        alt="Capital Area Food Chat Logo"
-        width={160}
-        height={160}
-        style={{ marginBottom: "1.5rem" }}
-      />
+    <main className="min-h-screen flex flex-col items-center  bg-[#E8F5E9] text-center p-8">
+      <div className="flex flex-col items-center max-w-3xl">
+        <Image
+          src="/capital_area_food_chat.png"
+          alt="Capital Area Food Chat Logo"
+          width={600}
+          height={600}
+          priority
+        />
 
-      <h1 className="text-3xl text-black font-bold mb-4">
-        {/* By adding a key using the locale, we force this TranslatedText to remount when locale changes */}
-        <TranslatedText key={`app.title-${locale}`} textKey="app.title" />
-      </h1>
+        <h1 className="text-3xl text-black font-bold mb-3">
+          <TranslatedText key={`app.title-${locale}`} textKey="app.title" />
+        </h1>
 
-      <>
-        <p className="text-lg text-gray-600 mb-6">
+        <p className="text-lg text-gray-600 mb-5">
           <TranslatedText textKey="app.description" />
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
           <SignedIn>
             <Link
               href="/survey"
@@ -144,10 +142,10 @@ export default function HomePage() {
             </Link>
           </SignedOut>
           <button className="border border-green-600 text-green-600 px-6 py-2 rounded-full hover:bg-green-100 transition">
-            <TranslatedText textKey="app.learnMore" />
+            <Link href={"https://www.capitalareafoodbank.org/"} target="_blank"><TranslatedText textKey="app.learnMore" /></Link>
           </button>
         </div>
-      </>
+      </div>
     </main>
   );
 }
