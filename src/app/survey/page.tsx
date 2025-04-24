@@ -1,15 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid";
 import { useTranslation } from "@/i18n";
 import TranslatedText from "@/components/TranslatedText";
 import Loading from "../components/Loading";
+import { useUser } from "@clerk/nextjs";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../../firebase";
+
+interface UserAnswers {
+  location: string;
+  day: string;
+  time: string;
+  hasTransport: string;
+  dietary: string;
+  hasKitchen: string;
+  services: string;
+  canSomeonePickup: string;
+}
 
 export default function Chatbot() {
+  const { user, isLoaded: isUserLoaded } = useUser();
   const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState({
+  const [answers, setAnswers] = useState<UserAnswers>({
     location: "",
     day: "",
     time: "",
@@ -22,6 +37,71 @@ export default function Chatbot() {
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(true);
   const { t, locale, isLoaded } = useTranslation();
+  const [userDataFetched, setUserDataFetched] = useState(false);
+
+  // Fetch user data from Firebase
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isUserLoaded || !user || !user.id) return;
+
+      try {
+        const userDocRef = doc(db, "users", user.id);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setAnswers({
+            location: userData.location || "",
+            day: userData.day || "",
+            time: userData.time || "",
+            hasTransport: userData.hasTransport || "",
+            dietary: userData.dietary || "",
+            hasKitchen: userData.hasKitchen || "",
+            services: userData.services || "",
+            canSomeonePickup: userData.canSomeonePickUp || "",
+          });
+        }
+        setUserDataFetched(true);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setUserDataFetched(true);
+      }
+    };
+
+    fetchUserData();
+  }, [isUserLoaded, user]);
+
+  // Update Firebase when answers change
+  useEffect(() => {
+    const updateUserData = async () => {
+      if (!isUserLoaded || !user || !user.id || !userDataFetched) return;
+
+      try {
+        const userDocRef = doc(db, "users", user.id);
+        await updateDoc(userDocRef, {
+          location: answers.location,
+          day: answers.day,
+          time: answers.time,
+          hasTransport: answers.hasTransport,
+          dietary: answers.dietary,
+          hasKitchen: answers.hasKitchen,
+          services: answers.services,
+          canSomeonePickUp: answers.canSomeonePickup,
+        });
+      } catch (error) {
+        console.error("Error updating user data:", error);
+      }
+    };
+
+    // Debounce update to avoid too many writes
+    const debounceTimer = setTimeout(() => {
+      if (userDataFetched) {
+        updateUserData();
+      }
+    }, 1000);
+
+    return () => clearTimeout(debounceTimer);
+  }, [answers, isUserLoaded, user, userDataFetched]);
 
   // Load all translations needed for this page
   useEffect(() => {
@@ -92,10 +172,13 @@ export default function Chatbot() {
   const totalSteps = 8;
   const progress = (step / totalSteps) * 100;
 
+  // Function to get placeholder text based on user data
+  const getPlaceholder = (field: keyof UserAnswers, defaultText: string) => {
+    return answers[field] ? answers[field] : defaultText;
+  };
+
   if (isLoading) {
-    return (
-      <Loading />
-    );
+    return <Loading />;
   }
 
   return (
@@ -103,13 +186,13 @@ export default function Chatbot() {
       <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg overflow-hidden border border-gray-100">
         {/* Page header */}
         <div className="bg-gradient-to-r from-blue-50 to-blue-100 px-6 py-4 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-2xl font-bold text-gray-900">
             <TranslatedText
               textKey="survey.title"
               params={{ current: step, total: totalSteps }}
             />
           </h1>
-          <p className="text-gray-600 text-sm mt-1">
+          <p className="text-gray-700 text-sm mt-1">
             <TranslatedText
               textKey="survey.description"
               params={{ current: step, total: totalSteps }}
@@ -120,7 +203,7 @@ export default function Chatbot() {
         <div className="p-6">
           {/* Progress indicator */}
           <div className="mb-8">
-            <div className="flex justify-between text-sm text-gray-700 mb-2">
+            <div className="flex justify-between text-sm text-gray-800 mb-2">
               <TranslatedText
                 textKey="survey.progress"
                 params={{ current: step, total: totalSteps }}
@@ -144,10 +227,10 @@ export default function Chatbot() {
 
           {step === 1 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.location.title"]}
               </h2>
-              <label htmlFor="location" className="block text-gray-700 mb-2">
+              <label htmlFor="location" className="block text-gray-800 mb-2">
                 {translations["survey.steps.location.question"]}
               </label>
               <input
@@ -157,7 +240,7 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, location: e.target.value })
                 }
-                className="border border-gray-300 placeholder-gray-400 px-4 py-2 w-full mb-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 placeholder-gray-500 px-4 py-2 w-full mb-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 placeholder={translations["survey.steps.location.placeholder"]}
                 aria-required="true"
               />
@@ -176,10 +259,10 @@ export default function Chatbot() {
 
           {step === 2 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.date.title"]}
               </h2>
-              <label htmlFor="day" className="block text-gray-700 mb-2">
+              <label htmlFor="day" className="block text-gray-800 mb-2">
                 {translations["survey.steps.date.question"]}
               </label>
               <input
@@ -190,13 +273,13 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, day: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 placeholder-gray-500 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 aria-required="true"
               />
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}
@@ -216,10 +299,10 @@ export default function Chatbot() {
 
           {step === 3 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.time.title"]}
               </h2>
-              <label htmlFor="time" className="block text-gray-700 mb-2">
+              <label htmlFor="time" className="block text-gray-800 mb-2">
                 {translations["survey.steps.time.question"]}
               </label>
               <input
@@ -230,13 +313,13 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, time: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 placeholder-gray-500 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 aria-required="true"
               />
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}
@@ -256,10 +339,10 @@ export default function Chatbot() {
 
           {step === 4 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.transport.title"]}
               </h2>
-              <label htmlFor="transport" className="block text-gray-700 mb-2">
+              <label htmlFor="transport" className="block text-gray-800 mb-2">
                 {translations["survey.steps.transport.question"]}
               </label>
               <select
@@ -268,26 +351,26 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, hasTransport: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium"
                 aria-required="true"
               >
-                <option value="">
+                <option value="" className="text-gray-900">
                   {translations["survey.steps.transport.selectOption"]}
                 </option>
-                <option value="yes">
+                <option value="yes" className="text-gray-900">
                   {translations["survey.steps.transport.hasTransport"]}
                 </option>
-                <option value="no">
+                <option value="no" className="text-gray-900">
                   {translations["survey.steps.transport.noTransport"]}
                 </option>
-                <option value="limited">
+                <option value="limited" className="text-gray-900">
                   {translations["survey.steps.transport.limitedTransport"]}
                 </option>
               </select>
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}
@@ -307,10 +390,10 @@ export default function Chatbot() {
 
           {step === 5 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.diet.title"]}
               </h2>
-              <label htmlFor="dietary" className="block text-gray-700 mb-2">
+              <label htmlFor="dietary" className="block text-gray-800 mb-2">
                 {translations["survey.steps.diet.question"]}
               </label>
               <input
@@ -321,12 +404,12 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, dietary: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 placeholder-gray-500 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
               />
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}
@@ -346,10 +429,10 @@ export default function Chatbot() {
 
           {step === 6 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.kitchen.title"]}
               </h2>
-              <label htmlFor="kitchen" className="block text-gray-700 mb-2">
+              <label htmlFor="kitchen" className="block text-gray-800 mb-2">
                 {translations["survey.steps.kitchen.question"]}
               </label>
               <select
@@ -358,26 +441,26 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, hasKitchen: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium"
                 aria-required="true"
               >
-                <option value="">
+                <option value="" className="text-gray-900">
                   {translations["survey.steps.kitchen.selectOption"]}
                 </option>
-                <option value="yes">
+                <option value="yes" className="text-gray-900">
                   {translations["survey.steps.kitchen.fullAccess"]}
                 </option>
-                <option value="limited">
+                <option value="limited" className="text-gray-900">
                   {translations["survey.steps.kitchen.limitedAccess"]}
                 </option>
-                <option value="no">
+                <option value="no" className="text-gray-900">
                   {translations["survey.steps.kitchen.noAccess"]}
                 </option>
               </select>
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}
@@ -397,10 +480,10 @@ export default function Chatbot() {
 
           {step === 7 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.services.title"]}
               </h2>
-              <label htmlFor="services" className="block text-gray-700 mb-2">
+              <label htmlFor="services" className="block text-gray-800 mb-2">
                 {translations["survey.steps.services.question"]}
               </label>
               <textarea
@@ -410,13 +493,13 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, services: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="border border-gray-300 placeholder-gray-500 px-4 py-2 w-full mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 rows={3}
               />
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}
@@ -436,10 +519,10 @@ export default function Chatbot() {
 
           {step === 8 && (
             <div className="transition-all duration-300 animate-fadeIn">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">
                 {translations["survey.steps.pickup.title"]}
               </h2>
-              <label htmlFor="pickup" className="block text-gray-700 mb-2">
+              <label htmlFor="pickup" className="block text-gray-800 mb-2">
                 {translations["survey.steps.pickup.question"]}
               </label>
               <select
@@ -448,28 +531,28 @@ export default function Chatbot() {
                 onChange={(e) =>
                   setAnswers({ ...answers, canSomeonePickup: e.target.value })
                 }
-                className="border border-gray-300 px-4 py-2 w-full mb-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                className="border border-gray-300 px-4 py-2 w-full mb-6 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 font-medium"
                 aria-required="true"
               >
-                <option value="">
+                <option value="" className="text-gray-900">
                   {translations["survey.steps.pickup.selectOption"]}
                 </option>
-                <option value="yes">
+                <option value="yes" className="text-gray-900">
                   {translations["survey.steps.pickup.canPickup"]}
                 </option>
-                <option value="no">
+                <option value="no" className="text-gray-900">
                   {translations["survey.steps.pickup.cannotPickup"]}
                 </option>
-                <option value="maybe">
+                <option value="maybe" className="text-gray-900">
                   {translations["survey.steps.pickup.maybePickup"]}
                 </option>
               </select>
 
               <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                <h3 className="font-medium text-green-800 mb-1">
+                <h3 className="font-medium text-green-900 mb-1">
                   {translations["survey.completion.title"]}
                 </h3>
-                <p className="text-green-700 text-sm">
+                <p className="text-green-800 text-sm">
                   {translations["survey.completion.description"]}
                 </p>
               </div>
@@ -477,7 +560,7 @@ export default function Chatbot() {
               <div className="flex justify-between">
                 <button
                   onClick={handlePrevious}
-                  className="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="border border-gray-300 hover:bg-gray-100 text-gray-800 px-6 py-2 rounded-md flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Previous question"
                 >
                   <ArrowLeftIcon className="h-4 w-4" />{" "}

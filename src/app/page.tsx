@@ -66,6 +66,7 @@ export default function HomePage() {
         const userData = {
           firstName: user.firstName,
           lastName: user.lastName,
+          createdAt: new Date().toISOString(),
           email: user.primaryEmailAddress?.emailAddress,
           isActive: false,
           location: "",
@@ -77,7 +78,6 @@ export default function HomePage() {
           services: "",
           canSomeonePickUp: "",
           language: locale, // Use the selected language
-          culturalBackground: "Not set",
         };
         console.log("User data being saved:", userData);
         await setDoc(docRef, userData);
